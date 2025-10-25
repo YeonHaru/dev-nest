@@ -9,3 +9,12 @@
 - 프론트엔드: React, Vite, Tailwind CSS v4
 - 백엔드: Spring Boot
 - 데이터베이스: Microsoft SQL Server (MSSQL)
+
+## 프론트엔드 개발
+
+- 루트 실행: `cd dev-nest-frontend && npm install && npm run dev`
+- 주요 라우트
+  - `/` : 홈(DevNest 소개)
+  - `/signin` : 로그인 폼
+  - `/signup` : 회원가입 폼
+  - `/posts/new` : 포스팅 작성 화면 (마크다운 초안/미리보기)
