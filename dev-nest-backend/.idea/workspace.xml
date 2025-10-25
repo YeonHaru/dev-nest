@@ -40,6 +40,9 @@
     "node.js.selected.package.eslint": "(autodetect)",
     "node.js.selected.package.tslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
+    "project.structure.last.edited": "모듈",
+    "project.structure.proportion": "0.0",
+    "project.structure.side.proportion": "0.2",
     "vue.rearranger.settings.migration": "true",
     "애플리케이션.DevNestBackendApplication.executor": "Coverage"
   }
@@ -86,7 +89,7 @@
       <workItem from="1761193260132" duration="2091000" />
       <workItem from="1761220265791" duration="956000" />
       <workItem from="1761296421271" duration="1419000" />
-      <workItem from="1761377451389" duration="301000" />
+      <workItem from="1761377451389" duration="636000" />
     </task>
     <servers />
   </component>
