@@ -5,6 +5,7 @@ import com.developersnest.devnestbackend.auth.security.RestAuthenticationEntryPo
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -38,8 +39,20 @@ public class SecurityConfig {
                 .exceptionHandling(handler -> handler.authenticationEntryPoint(restAuthenticationEntryPoint))
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/api/auth/signup", "/api/auth/login").permitAll()
-                        .requestMatchers(org.springframework.http.HttpMethod.GET, "/api/posts/**").permitAll()
-                        .anyRequest().authenticated()
+                        .requestMatchers(HttpMethod.GET, "/api/posts/me").authenticated()
+                        .requestMatchers(HttpMethod.GET, "/api/comments/me").authenticated()
+                        .requestMatchers(HttpMethod.GET, "/api/posts/*/comments").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/comments/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/posts/**").permitAll()
+                        .requestMatchers("/api/auth/logout").authenticated()
+                        .requestMatchers(HttpMethod.POST, "/api/posts/**").authenticated()
+                        .requestMatchers(HttpMethod.PUT, "/api/posts/**").authenticated()
+                        .requestMatchers(HttpMethod.DELETE, "/api/posts/**").authenticated()
+                        .requestMatchers(HttpMethod.POST, "/api/comments/**").authenticated()
+                        .requestMatchers(HttpMethod.PUT, "/api/comments/**").authenticated()
+                        .requestMatchers(HttpMethod.DELETE, "/api/comments/**").authenticated()
+                        .requestMatchers("/api/users/me", "/api/me/**", "/api/profile/**").authenticated()
+                        .anyRequest().permitAll()
                 )
                 .authenticationProvider(authenticationProvider())
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);

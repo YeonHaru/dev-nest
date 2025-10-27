@@ -34,9 +34,6 @@ public class CommentReactionEntity {
     @JoinColumn(name = "user_id")
     private UserEntity user;
 
-    @Column(name = "reaction", nullable = false, insertable = false, updatable = false)
-    private String reaction;
-
     @Column(name = "reacted_at", nullable = false)
     private LocalDateTime reactedAt = LocalDateTime.now();
 }

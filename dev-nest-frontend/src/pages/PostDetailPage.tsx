@@ -1,9 +1,11 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import ViewContainer from '../components/ViewContainer'
 import { useAuth } from '../contexts/AuthContext'
 import CommentsSection from '../components/comments/CommentsSection'
 import { postsApi, type PostDetail, type PostEngagement } from '../services/postsApi'
+import { renderMarkdown } from '../utils/markdown'
+import { formatDateTime } from '../utils/date'
 
 const PostDetailPage = () => {
   const { slug } = useParams<{ slug: string }>()
@@ -16,44 +18,59 @@ const PostDetailPage = () => {
   const [isDeleting, setIsDeleting] = useState(false)
   const [isLikePending, setIsLikePending] = useState(false)
 
+  const fetchCacheRef = useRef<{
+    slug: string
+    promise: Promise<PostDetail>
+  } | null>(null)
+
   useEffect(() => {
     if (!slug) {
       setError('잘못된 요청입니다.')
       setIsLoading(false)
+       fetchCacheRef.current = null
       return
     }
 
-    let mounted = true
-    ;(async () => {
-      try {
-        setIsLoading(true)
-        const detail = await postsApi.fetchBySlug(slug)
-        if (mounted) {
+    const attachHandlers = (promise: Promise<PostDetail>) => {
+      promise
+        .then((detail) => {
+          if (fetchCacheRef.current?.slug !== slug) {
+            return
+          }
           setPost(detail)
           setEngagement({
             likes: detail.likes,
             views: detail.views,
             liked: false,
           })
-        }
-      } catch (fetchError) {
-        if (mounted) {
+          setError(null)
+        })
+        .catch((fetchError: unknown) => {
+          if (fetchCacheRef.current?.slug !== slug) {
+            return
+          }
           const message =
-            fetchError instanceof Error
-              ? fetchError.message
-              : '포스트를 불러오지 못했습니다.'
+            fetchError instanceof Error ? fetchError.message : '포스트를 불러오지 못했습니다.'
           setError(message)
-        }
-      } finally {
-        if (mounted) {
-          setIsLoading(false)
-        }
-      }
-    })()
-
-    return () => {
-      mounted = false
+          setPost(null)
+          setEngagement(null)
+        })
+        .finally(() => {
+          if (fetchCacheRef.current?.slug === slug) {
+            setIsLoading(false)
+          }
+        })
     }
+
+    if (fetchCacheRef.current?.slug === slug) {
+      attachHandlers(fetchCacheRef.current.promise)
+      return
+    }
+
+    setIsLoading(true)
+    const promise = postsApi.fetchBySlug(slug)
+    fetchCacheRef.current = { slug, promise }
+    attachHandlers(promise)
   }, [slug])
 
   useEffect(() => {
@@ -78,7 +95,7 @@ const PostDetailPage = () => {
         if (!cancelled) {
           setEngagement(data)
         }
-      } catch (fetchError) {
+      } catch {
         if (!cancelled) {
           setEngagement({
             likes: post.likes,
@@ -151,27 +168,11 @@ const PostDetailPage = () => {
     }
   }
 
-  const formatDateTime = (iso: string) => {
-    const date = new Date(iso)
-    return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(
-      date.getDate(),
-    ).padStart(2, '0')} ${String(date.getHours()).padStart(2, '0')}:${String(
-      date.getMinutes(),
-    ).padStart(2, '0')}`
-  }
+  const postContent = post?.content ?? ''
+  const contentHtml = useMemo(() => renderMarkdown(postContent), [postContent])
 
-  const renderContent = (content: string) => {
-    return content.split('\n\n').map((paragraph, index) => (
-      <p key={index} className="leading-relaxed text-slate-200">
-        {paragraph}
-      </p>
-    ))
-  }
-
-  const displayViews =
-    engagement?.views ?? (post ? post.views : 0)
-  const displayLikes =
-    engagement?.likes ?? (post ? post.likes : 0)
+  const displayViews = engagement?.views ?? (post ? post.views : 0)
+  const displayLikes = engagement?.likes ?? (post ? post.likes : 0)
 
   return (
     <ViewContainer as="main" className="flex flex-col gap-10 py-16 text-slate-100">
@@ -256,9 +257,10 @@ const PostDetailPage = () => {
             )}
           </header>
           <section className="space-y-4 rounded-2xl border border-slate-800 bg-slate-950/70 p-8">
-            <div className="prose prose-invert max-w-none">
-              {renderContent(post.content)}
-            </div>
+            <div
+              className="markdown-body"
+              dangerouslySetInnerHTML={{ __html: contentHtml }}
+            />
           </section>
           {user && user.id === post.author.id && token && (
             <footer className="flex flex-wrap gap-3">
@@ -280,6 +282,7 @@ const PostDetailPage = () => {
           )}
           <CommentsSection
             postId={post.id}
+            postSlug={post.slug}
             accessToken={token?.accessToken}
             currentUserId={user?.id}
             onRequireAuth={handleRequireAuth}

@@ -34,19 +34,27 @@ export type CommentReaction = {
   liked: boolean
 }
 
+export type UserComment = {
+  id: number
+  postId: number | null
+  postTitle: string | null
+  postSlug: string | null
+  parentId: number | null
+  deleted: boolean
+  bodyMarkdown: string | null
+  bodyHtml: string | null
+  likeCount: number
+  createdAt: string
+  updatedAt: string
+}
+
 const jsonHeaders = {
   'Content-Type': 'application/json',
   Accept: 'application/json',
 }
 
-const createAuthHeaders = (accessToken?: string) => {
-  if (!accessToken) {
-    return {}
-  }
-  return {
-    Authorization: `Bearer ${accessToken}`,
-  }
-}
+const createAuthHeaders = (accessToken?: string): Record<string, string> =>
+  accessToken ? { Authorization: `Bearer ${accessToken}` } : {}
 
 const handleResponse = async <T>(response: Response): Promise<T> => {
   if (response.status === 401 || response.status === 403) {
@@ -143,5 +151,14 @@ export const commentsApi = {
       },
     })
     return handleResponse<CommentReaction>(response)
+  },
+  async fetchMyComments(accessToken: string): Promise<UserComment[]> {
+    const response = await fetch(`${API_BASE_URL}/api/comments/me`, {
+      headers: {
+        Accept: 'application/json',
+        ...createAuthHeaders(accessToken),
+      },
+    })
+    return handleResponse<UserComment[]>(response)
   },
 }

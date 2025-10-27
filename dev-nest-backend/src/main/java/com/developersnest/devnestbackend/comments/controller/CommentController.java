@@ -5,6 +5,7 @@ import com.developersnest.devnestbackend.comments.dto.CommentReactionResponse;
 import com.developersnest.devnestbackend.comments.dto.CommentResponse;
 import com.developersnest.devnestbackend.comments.dto.CreateCommentRequest;
 import com.developersnest.devnestbackend.comments.dto.UpdateCommentRequest;
+import com.developersnest.devnestbackend.comments.dto.UserCommentResponse;
 import com.developersnest.devnestbackend.comments.service.CommentService;
 import jakarta.validation.Valid;
 import java.util.List;
@@ -85,6 +86,12 @@ public class CommentController {
     ) {
         Long userId = requireAuthenticated(principal);
         return commentService.unlikeComment(commentId, userId);
+    }
+
+    @GetMapping("/comments/me")
+    public List<UserCommentResponse> myComments(@AuthenticationPrincipal UserPrincipal principal) {
+        Long userId = requireAuthenticated(principal);
+        return commentService.listUserComments(userId);
     }
 
     private Long requireAuthenticated(UserPrincipal principal) {

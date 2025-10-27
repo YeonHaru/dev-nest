@@ -1,8 +1,11 @@
-import { useEffect, useMemo, useState, type FormEvent } from 'react'
+import { useEffect, useMemo, useRef, useState, type FormEvent } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import ViewContainer from '../components/ViewContainer'
 import { useAuth } from '../contexts/AuthContext'
 import { postsApi } from '../services/postsApi'
+import { renderMarkdown } from '../utils/markdown'
+import { usePostDraft, type PostDraftState } from '../hooks/usePostDraft'
+import { useNotifications } from '../contexts/NotificationContext'
 
 const defaultPreview = {
   title: '새로운 기술 인사이트를 공유해 보세요',
@@ -10,6 +13,14 @@ const defaultPreview = {
     'DevNest는 개발자의 경험과 지식을 연결합니다. 포스트를 작성하면 홈 피드와 마이페이지에 반영됩니다.',
   tags: ['devnest', 'guides'],
   content: `## Markdown으로 글을 작성하세요\n\n- 코드 블록\n- 강조 텍스트\n- 이미지 업로드 (추후 지원 예정)`,
+}
+
+const draftInitialState: PostDraftState = {
+  title: '',
+  summary: '',
+  content: '',
+  tagsInput: '',
+  heroImageUrl: '',
 }
 
 const PostEditorPage = () => {
@@ -28,9 +39,37 @@ const PostEditorPage = () => {
   const [success, setSuccess] = useState<string | null>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isLoading, setIsLoading] = useState(isEditMode)
+  const [showDraftRestored, setShowDraftRestored] = useState(false)
+
+  const {
+    draft,
+    saveDraft,
+    clearDraft,
+    hasDraft,
+  } = usePostDraft({
+    slug,
+    enabled: !isEditMode,
+    initialState: draftInitialState,
+  })
+
+  const draftAppliedRef = useRef(false)
+  const { addNotification } = useNotifications()
 
   useEffect(() => {
-    if (!isEditMode || !slug) {
+    if (!isEditMode) {
+      if (draft && !draftAppliedRef.current) {
+        setTitle(draft.title)
+        setSummary(draft.summary)
+        setContent(draft.content)
+        setTagsInput(draft.tagsInput)
+        setHeroImageUrl(draft.heroImageUrl)
+        draftAppliedRef.current = true
+        setShowDraftRestored(true)
+      }
+      return
+    }
+
+    if (!slug) {
       return
     }
 
@@ -70,7 +109,7 @@ const PostEditorPage = () => {
     return () => {
       mounted = false
     }
-  }, [isEditMode, slug, user])
+  }, [draft, isEditMode, slug, user])
 
   useEffect(() => {
     setSuccess(null)
@@ -84,6 +123,18 @@ const PostEditorPage = () => {
       .slice(0, 10)
   }, [tagsInput])
 
+  useEffect(() => {
+    if (isEditMode) {
+      return
+    }
+    const handler = window.setTimeout(() => {
+      saveDraft({ title, summary, content, tagsInput, heroImageUrl })
+    }, 800)
+    return () => {
+      window.clearTimeout(handler)
+    }
+  }, [isEditMode, title, summary, content, tagsInput, heroImageUrl, saveDraft])
+
   const previewData = useMemo(() => {
     return {
       title: title || defaultPreview.title,
@@ -92,6 +143,10 @@ const PostEditorPage = () => {
       content: content || defaultPreview.content,
     }
   }, [title, summary, tags, content])
+  const previewHtml = useMemo(
+    () => renderMarkdown(previewData.content),
+    [previewData.content],
+  )
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
@@ -128,10 +183,19 @@ const PostEditorPage = () => {
         }
         const updated = await postsApi.updatePost(postId, payload, token.accessToken)
         setSuccess('포스트가 수정되었습니다.')
+        addNotification({
+          message: '포스트가 업데이트되었습니다.',
+          link: `/posts/${updated.slug}`,
+        })
         navigate(`/posts/${updated.slug}`, { replace: true })
       } else {
         const created = await postsApi.createPost(payload, token.accessToken)
         setSuccess('포스트가 발행되었습니다.')
+        clearDraft()
+        addNotification({
+          message: '새 포스트가 발행되었습니다.',
+          link: `/posts/${created.slug}`,
+        })
         navigate(`/posts/${created.slug}`, { replace: true })
       }
     } catch (submitError) {
@@ -192,6 +256,29 @@ const PostEditorPage = () => {
           <p className="rounded-lg border border-emerald-500/40 bg-emerald-500/10 px-3 py-2 text-xs text-emerald-200">
             {success}
           </p>
+        )}
+        {!isEditMode && showDraftRestored && (
+          <div className="rounded-lg border border-emerald-400/40 bg-emerald-500/10 px-3 py-2 text-xs text-emerald-200">
+            임시 저장된 초안이 불러와졌습니다. 계속 작성하거나 삭제할 수 있어요.
+          </div>
+        )}
+        {!isEditMode && hasDraft && (
+          <button
+            type="button"
+            onClick={() => {
+              clearDraft()
+              setTitle('')
+              setSummary('')
+              setContent('')
+              setTagsInput('')
+              setHeroImageUrl('')
+              draftAppliedRef.current = false
+              setShowDraftRestored(false)
+            }}
+            className="text-xs text-slate-400 underline underline-offset-2"
+          >
+            임시 저장 삭제하기
+          </button>
         )}
         <form
           className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] lg:gap-8"
@@ -311,11 +398,10 @@ const PostEditorPage = () => {
                   ))}
                 </div>
               </div>
-              <div className="space-y-4 text-sm text-slate-200">
-                {previewData.content.split('\n\n').map((block, index) => (
-                  <p key={index}>{block}</p>
-                ))}
-              </div>
+              <div
+                className="markdown-body text-sm text-slate-200"
+                dangerouslySetInnerHTML={{ __html: previewHtml }}
+              />
             </article>
           </aside>
         </form>

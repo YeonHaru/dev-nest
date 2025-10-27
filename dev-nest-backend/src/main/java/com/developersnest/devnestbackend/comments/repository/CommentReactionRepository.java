@@ -2,6 +2,7 @@ package com.developersnest.devnestbackend.comments.repository;
 
 import com.developersnest.devnestbackend.comments.entity.CommentReactionEntity;
 import com.developersnest.devnestbackend.comments.entity.CommentReactionId;
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -26,6 +27,17 @@ public interface CommentReactionRepository extends JpaRepository<CommentReaction
             """)
     List<CommentReactionSummary> aggregateReactionCount(
             @Param("postId") Long postId,
+            @Param("reaction") String reaction
+    );
+
+    @Query("""
+            SELECT r.id.commentId AS commentId, COUNT(r) AS count
+            FROM CommentReactionEntity r
+            WHERE r.id.commentId IN :commentIds AND r.id.reaction = :reaction
+            GROUP BY r.id.commentId
+            """)
+    List<CommentReactionSummary> aggregateReactionCountByCommentIds(
+            @Param("commentIds") Collection<Long> commentIds,
             @Param("reaction") String reaction
     );
 

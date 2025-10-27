@@ -1,6 +1,7 @@
 import { Link, useNavigate } from 'react-router-dom'
 import ViewContainer from './ViewContainer'
 import { useAuth } from '../contexts/AuthContext'
+import NotificationBell from './NotificationBell'
 
 const Header = () => {
   const navigate = useNavigate()
@@ -10,6 +11,9 @@ const Header = () => {
     await signOut()
     navigate('/', { replace: true })
   }
+
+  const baseButtonClass =
+    'rounded-lg px-4 py-2 text-sm font-medium transition-all'
 
   return (
     <header className="sticky top-0 z-50 border-b border-slate-800/60 bg-slate-950/70 backdrop-blur transition-shadow duration-200 hover:shadow-[0_20px_60px_-40px_rgba(16,185,129,0.55)] relative">
@@ -30,39 +34,41 @@ const Header = () => {
         </Link>
         {user ? (
           <nav className="flex items-center gap-2">
+            <NotificationBell />
             <Link
               to="/mypage"
-              className="rounded-lg border border-slate-700/70 px-3.5 py-1.5 text-sm font-medium text-slate-200 transition-all hover:border-emerald-400/60 hover:bg-slate-900/70"
+              className={`${baseButtonClass} border border-slate-700/70 text-slate-200 hover:border-emerald-400/60 hover:bg-slate-900/70`}
             >
               마이페이지
             </Link>
             <Link
               to="/posts/new"
-              className="rounded-lg bg-gradient-to-r from-emerald-400 via-emerald-500 to-teal-400 px-3.5 py-1.5 text-sm font-semibold text-slate-950 transition-transform hover:-translate-y-0.5"
+              className={`${baseButtonClass} bg-gradient-to-r from-emerald-400 via-emerald-500 to-teal-400 font-semibold text-slate-950 hover:-translate-y-0.5`}
             >
-              포스팅하기
+              새 글 작성
             </Link>
             <button
               type="button"
               onClick={handleSignOut}
-              className="rounded-lg border border-transparent px-3 py-1.5 text-xs font-medium text-slate-400 transition-colors hover:border-slate-700 hover:text-slate-200"
+              className={`${baseButtonClass} border border-transparent text-slate-300 hover:border-slate-700 hover:text-slate-100`}
             >
               로그아웃
             </button>
           </nav>
         ) : (
           <nav className="flex items-center gap-3">
+            <NotificationBell />
             <Link
               to="/signin"
-              className="rounded-lg border border-slate-700/70 px-3.5 py-1.5 text-sm font-medium text-slate-200 transition-all hover:border-emerald-400/60 hover:bg-slate-900/70"
+              className={`${baseButtonClass} border border-slate-700/70 text-slate-200 hover:border-emerald-400/60 hover:bg-slate-900/70`}
             >
-              Sign in
+              로그인
             </Link>
             <Link
               to="/signup"
-              className="rounded-lg bg-gradient-to-r from-emerald-400 via-emerald-500 to-teal-400 px-3.5 py-1.5 text-sm font-semibold text-slate-950 transition-transform hover:-translate-y-0.5"
+              className={`${baseButtonClass} bg-gradient-to-r from-emerald-400 via-emerald-500 to-teal-400 font-semibold text-slate-950 hover:-translate-y-0.5`}
             >
-              Sign up
+              회원가입
             </Link>
           </nav>
         )}

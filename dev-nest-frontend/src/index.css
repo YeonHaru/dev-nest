@@ -11,3 +11,64 @@ body {
 a {
   @apply no-underline;
 }
+
+.markdown-body {
+  @apply space-y-4 leading-relaxed;
+}
+
+.markdown-body p {
+  @apply whitespace-pre-wrap text-slate-200;
+}
+
+.markdown-body h1 {
+  @apply text-3xl font-semibold text-white;
+}
+
+.markdown-body h2 {
+  @apply text-2xl font-semibold text-white;
+}
+
+.markdown-body h3 {
+  @apply text-xl font-semibold text-white;
+}
+
+.markdown-body h4 {
+  @apply text-lg font-semibold text-white;
+}
+
+.markdown-body a {
+  @apply text-emerald-300 underline underline-offset-2 transition-colors hover:text-emerald-200;
+}
+
+.markdown-body ul,
+.markdown-body ol {
+  @apply ml-5 space-y-2 text-slate-200;
+}
+
+.markdown-body ul {
+  @apply list-disc;
+}
+
+.markdown-body ol {
+  @apply list-decimal;
+}
+
+.markdown-body pre {
+  @apply overflow-x-auto rounded-xl border border-slate-800 bg-slate-950/80 p-4 text-sm text-slate-200 shadow-inner;
+}
+
+.markdown-body code {
+  @apply rounded bg-slate-900/80 px-1.5 py-0.5 text-xs font-mono text-emerald-200;
+}
+
+.markdown-body pre code {
+  @apply bg-transparent p-0 text-xs text-emerald-200;
+}
+
+.markdown-body blockquote {
+  @apply border-l-4 border-emerald-400/40 bg-slate-900/70 px-4 py-2 text-slate-300 italic;
+}
+
+.markdown-body img {
+  @apply max-w-full rounded-xl border border-slate-800;
+}

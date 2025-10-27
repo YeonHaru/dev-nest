@@ -1,8 +1,12 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { commentsApi, type Comment } from '../../services/commentsApi'
+import { escapeUnsafeHtml, renderMarkdown } from '../../utils/markdown'
+import { formatDateTime } from '../../utils/date'
+import { useNotifications } from '../../contexts/NotificationContext'
 
 type CommentsSectionProps = {
   postId: number
+  postSlug?: string
   accessToken?: string | null
   currentUserId?: number | null
   onRequireAuth: () => void
@@ -12,6 +16,7 @@ const AUTH_STORAGE_KEY = 'devnest.auth'
 
 const CommentsSection = ({
   postId,
+  postSlug,
   accessToken,
   currentUserId,
   onRequireAuth,
@@ -27,6 +32,7 @@ const CommentsSection = ({
   const [replyBody, setReplyBody] = useState('')
   const [replyError, setReplyError] = useState<string | null>(null)
   const [isReplySubmitting, setIsReplySubmitting] = useState(false)
+  const { addNotification } = useNotifications()
 
   const resolvedAccessToken = useMemo(() => {
     if (accessToken) {
@@ -83,6 +89,19 @@ const CommentsSection = ({
     }
     return null
   }, [currentUserId])
+
+  const getCommentBodyHtml = useCallback((comment: Comment) => {
+    if (!comment) {
+      return ''
+    }
+    if (comment.bodyMarkdown && comment.bodyMarkdown.trim().length > 0) {
+      return renderMarkdown(comment.bodyMarkdown)
+    }
+    if (comment.bodyHtml && comment.bodyHtml.trim().length > 0) {
+      return escapeUnsafeHtml(comment.bodyHtml)
+    }
+    return ''
+  }, [])
 
   const loadComments = useCallback(
     async (withSpinner: boolean) => {
@@ -155,6 +174,10 @@ const CommentsSection = ({
         resolvedAccessToken,
       )
       setCommentBody('')
+      addNotification({
+        message: '댓글이 등록되었습니다.',
+        link: postSlug ? `/posts/${postSlug}` : undefined,
+      })
       await loadComments(false)
     } catch (submitError) {
       const message =
@@ -204,6 +227,10 @@ const CommentsSection = ({
       )
       setReplyBody('')
       setReplyTargetId(null)
+      addNotification({
+        message: '답글이 등록되었습니다.',
+        link: postSlug ? `/posts/${postSlug}` : undefined,
+      })
       await loadComments(false)
     } catch (submitError) {
       const message =
@@ -247,6 +274,10 @@ const CommentsSection = ({
     }
     try {
       await commentsApi.deleteComment(comment.id, resolvedAccessToken)
+      addNotification({
+        message: '댓글이 삭제되었습니다.',
+        link: postSlug ? `/posts/${postSlug}` : undefined,
+      })
       await loadComments(false)
     } catch (deleteError) {
       const message =
@@ -255,16 +286,6 @@ const CommentsSection = ({
           : '댓글을 삭제하지 못했습니다.'
       setError(message)
     }
-  }
-
-  const formatDateTime = (iso: string) => {
-    const date = new Date(iso)
-    return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(
-      2,
-      '0',
-    )}-${String(date.getDate()).padStart(2, '0')} ${String(
-      date.getHours(),
-    ).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}`
   }
 
   const renderComments = (items: Comment[], depth = 0) => {
@@ -292,15 +313,15 @@ const CommentsSection = ({
                 </button>
               )}
             </div>
-            <div className="text-sm leading-relaxed text-slate-200">
+            <div className="markdown-body text-sm leading-relaxed text-slate-200">
               {comment.deleted ? (
                 <span className="text-slate-500">삭제된 댓글입니다.</span>
               ) : (
-                comment.bodyMarkdown?.split('\n').map((line, index) => (
-                  <p key={index} className="whitespace-pre-wrap">
-                    {line}
-                  </p>
-                ))
+                <div
+                  dangerouslySetInnerHTML={{
+                    __html: getCommentBodyHtml(comment),
+                  }}
+                />
               )}
             </div>
             <div className="flex items-center gap-3 text-xs text-slate-400">

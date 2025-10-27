@@ -173,4 +173,13 @@ export const postsApi = {
     })
     return handleResponse<PostEngagement>(response)
   },
+  async fetchMyPosts(accessToken: string): Promise<PostSummary[]> {
+    const response = await fetch(`${API_BASE_URL}/api/posts/me`, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        Accept: 'application/json',
+      },
+    })
+    return handleResponse<PostSummary[]>(response)
+  },
 }

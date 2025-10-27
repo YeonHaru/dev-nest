@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import ViewContainer from '../components/ViewContainer'
 import { postsApi, type PostSummary } from '../services/postsApi'
+import { formatDate } from '../utils/date'
 
 const HomePage = () => {
   const [query, setQuery] = useState('')
@@ -71,16 +72,21 @@ const HomePage = () => {
     })
   }, [query, topPosts])
 
-  const formatDate = (iso?: string | null) => {
-    if (!iso) return '-'
-    const date = new Date(iso)
-    if (Number.isNaN(date.getTime())) {
-      return '-'
-    }
-    return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(
-      date.getDate(),
-    ).padStart(2, '0')}`
-  }
+  const suggestedTags = useMemo(() => {
+    const counter = new Map<string, number>()
+    posts.forEach((post) => {
+      post.tags.forEach((tag) => {
+        const normalized = tag.trim().toLowerCase()
+        if (!normalized) {
+          return
+        }
+        counter.set(normalized, (counter.get(normalized) ?? 0) + 1)
+      })
+    })
+    const defaults = ['spring', 'react', 'devops', 'database', 'ai']
+    const combined = [...defaults, ...counter.keys()].map((tag) => tag.toLowerCase())
+    return [...new Set(combined)].slice(0, 12)
+  }, [posts])
 
   return (
     <ViewContainer
@@ -122,7 +128,7 @@ const HomePage = () => {
             />
           </label>
           <div className="flex flex-wrap gap-2 text-xs text-slate-400">
-            {['spring', 'react', 'devops', 'database', 'ai'].map((tag) => (
+            {suggestedTags.map((tag) => (
               <button
                 key={tag}
                 type="button"

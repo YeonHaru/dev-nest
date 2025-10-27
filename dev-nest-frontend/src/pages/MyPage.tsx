@@ -1,53 +1,69 @@
-import { Link, Navigate } from 'react-router-dom'
+import { useMemo } from 'react'
+import { Navigate } from 'react-router-dom'
 import ViewContainer from '../components/ViewContainer'
 import { useAuth } from '../contexts/AuthContext'
+import ProfileSummaryCard from '../components/mypage/ProfileSummaryCard'
+import PostListSection from '../components/mypage/PostListSection'
+import CommentListSection from '../components/mypage/CommentListSection'
+import { useMyPosts } from '../hooks/useMyPosts'
+import { useMyComments } from '../hooks/useMyComments'
+import type { PostSummary } from '../services/postsApi'
+
+const summarizePost = (post: PostSummary): string => {
+  if (post.summary && post.summary.trim().length > 0) {
+    return post.summary.trim()
+  }
+  return '요약이 등록되지 않은 글입니다. 상세 페이지에서 내용을 확인해보세요.'
+}
 
 const MyPage = () => {
-  const { user } = useAuth()
+  const { user, token } = useAuth()
+  const accessToken = token?.accessToken ?? null
+
+  const {
+    posts,
+    isLoading: isLoadingPosts,
+    error: postsError,
+  } = useMyPosts(accessToken)
+
+  const {
+    comments,
+    isLoading: isLoadingComments,
+    error: commentsError,
+  } = useMyComments(accessToken)
+
+  const totalStats = useMemo(() => {
+    const views = posts.reduce((acc, post) => acc + (Number.isFinite(post.views) ? post.views : 0), 0)
+    const likes = posts.reduce((acc, post) => acc + (Number.isFinite(post.likes) ? post.likes : 0), 0)
+    return { views, likes }
+  }, [posts])
 
   if (!user) {
     return <Navigate to="/signin" replace />
   }
 
   return (
-    <ViewContainer
-      as="main"
-      className="flex flex-col gap-10 py-16 text-slate-100"
-    >
-      <section className="rounded-3xl border border-slate-800 bg-slate-950/80 p-10 shadow-[0_40px_120px_-40px_rgba(16,185,129,0.35)]">
-        <h1 className="text-3xl font-semibold text-white">마이페이지</h1>
-        <p className="mt-2 text-sm text-slate-400">
-          DevNest Explorer의 활동 현황을 확인하고 새 글을 작성해보세요.
-        </p>
-        <dl className="mt-6 grid gap-4 text-sm text-slate-300 sm:grid-cols-2">
-          <div className="rounded-xl border border-slate-800/80 bg-slate-900/70 p-4">
-            <dt className="text-xs font-medium uppercase tracking-[0.25em] text-emerald-300/80">
-              User ID
-            </dt>
-            <dd className="mt-2 text-lg font-semibold text-white">{user.id}</dd>
-          </div>
-          <div className="rounded-xl border border-slate-800/80 bg-slate-900/70 p-4">
-            <dt className="text-xs font-medium uppercase tracking-[0.25em] text-emerald-300/80">
-              Display Name
-            </dt>
-            <dd className="mt-2 text-lg font-semibold text-white">
-              {user.displayName}
-            </dd>
-          </div>
-        </dl>
-        <div className="mt-8 flex flex-wrap items-center justify-between gap-4">
-          <p className="text-xs text-slate-500">
-            곧 작성한 포스트와 댓글 기록을 확인할 수 있는 대시보드가 제공될
-            예정입니다.
-          </p>
-          <Link
-            to="/posts/new"
-            className="rounded-md bg-emerald-400 px-4 py-2 text-sm font-semibold text-slate-950 transition-colors hover:bg-emerald-300"
-          >
-            새 포스트 작성
-          </Link>
-        </div>
-      </section>
+    <ViewContainer as="main" className="flex flex-col gap-10 py-16 text-slate-100">
+      <ProfileSummaryCard
+        user={user}
+        postCount={posts.length}
+        commentCount={comments.length}
+        totalViews={totalStats.views}
+        totalLikes={totalStats.likes}
+      />
+
+      <PostListSection
+        posts={posts}
+        isLoading={isLoadingPosts}
+        error={postsError}
+        renderSummary={summarizePost}
+      />
+
+      <CommentListSection
+        comments={comments}
+        isLoading={isLoadingComments}
+        error={commentsError}
+      />
     </ViewContainer>
   )
 }

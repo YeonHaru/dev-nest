@@ -4,7 +4,32 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="83ecb471-21c8-4147-b8a0-489d7c51bb9e" name="변경" comment="" />
+    <list default="true" id="83ecb471-21c8-4147-b8a0-489d7c51bb9e" name="변경" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/developersnest/devnestbackend/auth/config/SecurityConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/developersnest/devnestbackend/auth/config/SecurityConfig.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/developersnest/devnestbackend/auth/dto/LoginRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/developersnest/devnestbackend/auth/dto/LoginRequest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/developersnest/devnestbackend/comments/controller/CommentController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/developersnest/devnestbackend/comments/controller/CommentController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/developersnest/devnestbackend/comments/entity/CommentReactionEntity.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/developersnest/devnestbackend/comments/entity/CommentReactionEntity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/developersnest/devnestbackend/comments/repository/CommentReactionRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/developersnest/devnestbackend/comments/repository/CommentReactionRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/developersnest/devnestbackend/comments/repository/CommentRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/developersnest/devnestbackend/comments/repository/CommentRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/developersnest/devnestbackend/posts/controller/PostController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/developersnest/devnestbackend/posts/controller/PostController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/developersnest/devnestbackend/posts/dto/PostDetailResponse.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/developersnest/devnestbackend/posts/dto/PostDetailResponse.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/developersnest/devnestbackend/posts/dto/PostEngagementResponse.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/developersnest/devnestbackend/posts/dto/PostEngagementResponse.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/developersnest/devnestbackend/posts/dto/PostListResponse.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/developersnest/devnestbackend/posts/dto/PostListResponse.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/developersnest/devnestbackend/posts/dto/PostSummaryResponse.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/developersnest/devnestbackend/posts/dto/PostSummaryResponse.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/developersnest/devnestbackend/posts/dto/PostWriteRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/developersnest/devnestbackend/posts/dto/PostWriteRequest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/developersnest/devnestbackend/posts/entity/PostLikeEntity.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/developersnest/devnestbackend/posts/entity/PostLikeEntity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/developersnest/devnestbackend/posts/entity/PostLikeId.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/developersnest/devnestbackend/posts/entity/PostLikeId.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/developersnest/devnestbackend/posts/entity/PostMetricsEntity.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/developersnest/devnestbackend/posts/entity/PostMetricsEntity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/developersnest/devnestbackend/posts/entity/TagEntity.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/developersnest/devnestbackend/posts/entity/TagEntity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/developersnest/devnestbackend/posts/mapper/PostMapper.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/developersnest/devnestbackend/posts/mapper/PostMapper.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/developersnest/devnestbackend/posts/repository/PostLikeRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/developersnest/devnestbackend/posts/repository/PostLikeRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/developersnest/devnestbackend/posts/repository/PostMetricsRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/developersnest/devnestbackend/posts/repository/PostMetricsRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/developersnest/devnestbackend/posts/repository/PostRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/developersnest/devnestbackend/posts/repository/PostRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/developersnest/devnestbackend/posts/repository/TagRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/developersnest/devnestbackend/posts/repository/TagRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/developersnest/devnestbackend/posts/service/PostService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/developersnest/devnestbackend/posts/service/PostService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/application.properties" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -26,27 +51,28 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;Gradle.dev-nest-backend [:com.developersnest.devnestbackend.DevNestBackendApplication.main()].executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.dev-nest-backend [bootRun].executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.dev-nest-backend 빌드.executor&quot;: &quot;Run&quot;,
-    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
-    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;project.structure.last.edited&quot;: &quot;모듈&quot;,
-    &quot;project.structure.proportion&quot;: &quot;0.0&quot;,
-    &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;,
-    &quot;애플리케이션.DevNestBackendApplication.executor&quot;: &quot;Coverage&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Gradle.dev-nest-backend [:com.developersnest.devnestbackend.DevNestBackendApplication.main()].executor": "Run",
+    "Gradle.dev-nest-backend [bootRun].executor": "Run",
+    "Gradle.dev-nest-backend 빌드.executor": "Run",
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "git-widget-placeholder": "main",
+    "kotlin-language-version-configured": "true",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "project.structure.last.edited": "모듈",
+    "project.structure.proportion": "0.0",
+    "project.structure.side.proportion": "0.2",
+    "vue.rearranger.settings.migration": "true",
+    "애플리케이션.DevNestBackendApplication.executor": "Coverage"
   }
-}</component>
+}]]></component>
   <component name="RunManager">
     <configuration name="dev-nest-backend [bootRun]" type="GradleRunConfiguration" factoryName="Gradle" nameIsGenerated="true">
       <ExternalSystemSettings>
@@ -90,6 +116,7 @@
       <workItem from="1761220265791" duration="956000" />
       <workItem from="1761296421271" duration="1419000" />
       <workItem from="1761377451389" duration="688000" />
+      <workItem from="1761562057071" duration="8764000" />
     </task>
     <servers />
   </component>
