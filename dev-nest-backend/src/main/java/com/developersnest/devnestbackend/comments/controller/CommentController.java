@@ -5,7 +5,7 @@ import com.developersnest.devnestbackend.comments.dto.CommentReactionResponse;
 import com.developersnest.devnestbackend.comments.dto.CommentResponse;
 import com.developersnest.devnestbackend.comments.dto.CreateCommentRequest;
 import com.developersnest.devnestbackend.comments.dto.UpdateCommentRequest;
-import com.developersnest.devnestbackend.comments.dto.UserCommentResponse;
+import com.developersnest.devnestbackend.comments.dto.UserCommentListResponse;
 import com.developersnest.devnestbackend.comments.service.CommentService;
 import jakarta.validation.Valid;
 import java.util.List;
@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -89,9 +90,13 @@ public class CommentController {
     }
 
     @GetMapping("/comments/me")
-    public List<UserCommentResponse> myComments(@AuthenticationPrincipal UserPrincipal principal) {
+    public UserCommentListResponse myComments(
+            @AuthenticationPrincipal UserPrincipal principal,
+            @RequestParam(name = "page", required = false) Integer page,
+            @RequestParam(name = "size", required = false) Integer size
+    ) {
         Long userId = requireAuthenticated(principal);
-        return commentService.listUserComments(userId);
+        return commentService.listUserComments(userId, page, size);
     }
 
     private Long requireAuthenticated(UserPrincipal principal) {

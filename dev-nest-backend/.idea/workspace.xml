@@ -6,29 +6,25 @@
   <component name="ChangeListManager">
     <list default="true" id="83ecb471-21c8-4147-b8a0-489d7c51bb9e" name="변경" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/developersnest/devnestbackend/auth/config/SecurityConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/developersnest/devnestbackend/auth/config/SecurityConfig.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/developersnest/devnestbackend/auth/dto/LoginRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/developersnest/devnestbackend/auth/dto/LoginRequest.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/developersnest/devnestbackend/comments/controller/CommentController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/developersnest/devnestbackend/comments/controller/CommentController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/developersnest/devnestbackend/comments/entity/CommentReactionEntity.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/developersnest/devnestbackend/comments/entity/CommentReactionEntity.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/developersnest/devnestbackend/comments/repository/CommentReactionRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/developersnest/devnestbackend/comments/repository/CommentReactionRepository.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/developersnest/devnestbackend/comments/repository/CommentRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/developersnest/devnestbackend/comments/repository/CommentRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/developersnest/devnestbackend/comments/service/CommentService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/developersnest/devnestbackend/comments/service/CommentService.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/developersnest/devnestbackend/posts/controller/PostController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/developersnest/devnestbackend/posts/controller/PostController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/developersnest/devnestbackend/posts/dto/PostDetailResponse.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/developersnest/devnestbackend/posts/dto/PostDetailResponse.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/developersnest/devnestbackend/posts/dto/PostEngagementResponse.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/developersnest/devnestbackend/posts/dto/PostEngagementResponse.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/developersnest/devnestbackend/posts/dto/PostListResponse.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/developersnest/devnestbackend/posts/dto/PostListResponse.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/developersnest/devnestbackend/posts/dto/PostSummaryResponse.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/developersnest/devnestbackend/posts/dto/PostSummaryResponse.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/developersnest/devnestbackend/posts/dto/PostWriteRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/developersnest/devnestbackend/posts/dto/PostWriteRequest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/developersnest/devnestbackend/posts/entity/PostLikeEntity.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/developersnest/devnestbackend/posts/entity/PostLikeEntity.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/developersnest/devnestbackend/posts/entity/PostLikeId.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/developersnest/devnestbackend/posts/entity/PostLikeId.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/developersnest/devnestbackend/posts/entity/PostMetricsEntity.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/developersnest/devnestbackend/posts/entity/PostMetricsEntity.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/developersnest/devnestbackend/posts/entity/TagEntity.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/developersnest/devnestbackend/posts/entity/TagEntity.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/developersnest/devnestbackend/posts/mapper/PostMapper.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/developersnest/devnestbackend/posts/mapper/PostMapper.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/developersnest/devnestbackend/posts/repository/PostLikeRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/developersnest/devnestbackend/posts/repository/PostLikeRepository.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/developersnest/devnestbackend/posts/repository/PostMetricsRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/developersnest/devnestbackend/posts/repository/PostMetricsRepository.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/developersnest/devnestbackend/posts/repository/PostRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/developersnest/devnestbackend/posts/repository/PostRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/developersnest/devnestbackend/posts/repository/TagRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/developersnest/devnestbackend/posts/repository/TagRepository.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/developersnest/devnestbackend/posts/service/PostService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/developersnest/devnestbackend/posts/service/PostService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/application.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../dev-nest-frontend/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/../dev-nest-frontend/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../dev-nest-frontend/src/assets/react.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../dev-nest-frontend/src/components/mypage/CommentListSection.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../dev-nest-frontend/src/components/mypage/CommentListSection.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../dev-nest-frontend/src/components/mypage/PostListSection.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../dev-nest-frontend/src/components/mypage/PostListSection.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../dev-nest-frontend/src/hooks/useMyComments.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../dev-nest-frontend/src/hooks/useMyComments.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../dev-nest-frontend/src/hooks/useMyPosts.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../dev-nest-frontend/src/hooks/useMyPosts.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../dev-nest-frontend/src/pages/AuthForm.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../dev-nest-frontend/src/pages/AuthForm.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../dev-nest-frontend/src/pages/HomePage.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../dev-nest-frontend/src/pages/HomePage.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../dev-nest-frontend/src/pages/MyPage.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../dev-nest-frontend/src/pages/MyPage.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../dev-nest-frontend/src/services/commentsApi.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../dev-nest-frontend/src/services/commentsApi.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../dev-nest-frontend/src/services/postsApi.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../dev-nest-frontend/src/services/postsApi.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -116,7 +112,7 @@
       <workItem from="1761220265791" duration="956000" />
       <workItem from="1761296421271" duration="1419000" />
       <workItem from="1761377451389" duration="688000" />
-      <workItem from="1761562057071" duration="8764000" />
+      <workItem from="1761562057071" duration="11576000" />
     </task>
     <servers />
   </component>

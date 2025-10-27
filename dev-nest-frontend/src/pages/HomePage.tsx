@@ -6,18 +6,23 @@ import { formatDate } from '../utils/date'
 
 const HomePage = () => {
   const [query, setQuery] = useState('')
-  const [posts, setPosts] = useState<PostSummary[]>([])
-  const [isLoading, setIsLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
+  const [latestPosts, setLatestPosts] = useState<PostSummary[]>([])
+  const [isLoadingLatest, setIsLoadingLatest] = useState(true)
+  const [latestError, setLatestError] = useState<string | null>(null)
+  const [searchResults, setSearchResults] = useState<PostSummary[]>([])
+  const [searchPage, setSearchPage] = useState(0)
+  const [searchHasMore, setSearchHasMore] = useState(false)
+  const [searchLoading, setSearchLoading] = useState(false)
+  const [searchError, setSearchError] = useState<string | null>(null)
 
   useEffect(() => {
     let mounted = true
     ;(async () => {
       try {
-        setIsLoading(true)
+        setIsLoadingLatest(true)
         const latest = await postsApi.fetchLatest(10)
         if (mounted) {
-          setPosts(latest)
+          setLatestPosts(latest)
         }
       } catch (fetchError) {
         if (mounted) {
@@ -25,11 +30,11 @@ const HomePage = () => {
             fetchError instanceof Error
               ? fetchError.message
               : '포스트를 불러오지 못했습니다.'
-          setError(message)
+          setLatestError(message)
         }
       } finally {
         if (mounted) {
-          setIsLoading(false)
+          setIsLoadingLatest(false)
         }
       }
     })()
@@ -39,8 +44,67 @@ const HomePage = () => {
     }
   }, [])
 
+  const trimmedQuery = query.trim()
+
+  useEffect(() => {
+    if (!trimmedQuery) {
+      setSearchResults([])
+      setSearchPage(0)
+      setSearchHasMore(false)
+      setSearchError(null)
+      return
+    }
+
+    let cancelled = false
+    setSearchLoading(true)
+    setSearchError(null)
+
+    postsApi
+      .fetchList({ keyword: trimmedQuery, page: 0, size: 10 })
+      .then((response) => {
+        if (cancelled) return
+        setSearchResults(response.items)
+        setSearchPage(1)
+        setSearchHasMore(response.page + 1 < response.totalPages)
+      })
+      .catch((fetchError: unknown) => {
+        if (cancelled) return
+        const message =
+          fetchError instanceof Error ? fetchError.message : '검색 결과를 불러오지 못했습니다.'
+        setSearchError(message)
+      })
+      .finally(() => {
+        if (!cancelled) {
+          setSearchLoading(false)
+        }
+      })
+
+    return () => {
+      cancelled = true
+    }
+  }, [trimmedQuery])
+
+  const handleLoadMoreSearch = async () => {
+    if (!trimmedQuery || searchLoading || !searchHasMore) {
+      return
+    }
+    try {
+      setSearchLoading(true)
+      const response = await postsApi.fetchList({ keyword: trimmedQuery, page: searchPage, size: 10 })
+      setSearchResults((prev) => [...prev, ...response.items])
+      setSearchPage((prev) => prev + 1)
+      setSearchHasMore(response.page + 1 < response.totalPages)
+    } catch (fetchError) {
+      const message =
+        fetchError instanceof Error ? fetchError.message : '검색 결과를 불러오지 못했습니다.'
+      setSearchError(message)
+    } finally {
+      setSearchLoading(false)
+    }
+  }
+
   const topPosts = useMemo(() => {
-    return [...posts]
+    return [...latestPosts]
       .sort((a, b) => {
         const likesA = typeof a.likes === 'number' ? a.likes : 0
         const likesB = typeof b.likes === 'number' ? b.likes : 0
@@ -55,26 +119,11 @@ const HomePage = () => {
         return new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime()
       })
       .slice(0, 10)
-  }, [posts])
-
-  const visiblePosts = useMemo(() => {
-    if (!query.trim()) {
-      return topPosts
-    }
-
-    const lowered = query.trim().toLowerCase()
-    return topPosts.filter((post) => {
-      return (
-        post.title.toLowerCase().includes(lowered) ||
-        (post.summary ?? '').toLowerCase().includes(lowered) ||
-        post.tags.some((tag) => tag.toLowerCase().includes(lowered))
-      )
-    })
-  }, [query, topPosts])
+  }, [latestPosts])
 
   const suggestedTags = useMemo(() => {
     const counter = new Map<string, number>()
-    posts.forEach((post) => {
+    latestPosts.forEach((post) => {
       post.tags.forEach((tag) => {
         const normalized = tag.trim().toLowerCase()
         if (!normalized) {
@@ -86,7 +135,17 @@ const HomePage = () => {
     const defaults = ['spring', 'react', 'devops', 'database', 'ai']
     const combined = [...defaults, ...counter.keys()].map((tag) => tag.toLowerCase())
     return [...new Set(combined)].slice(0, 12)
-  }, [posts])
+  }, [latestPosts])
+
+  const showingSearch = trimmedQuery.length > 0
+  const visiblePosts = showingSearch ? searchResults : topPosts
+  const isLoading = showingSearch ? searchLoading : isLoadingLatest
+  const currentError = showingSearch ? searchError : latestError
+  const showNoResult = !isLoading && visiblePosts.length === 0
+  const sectionTitle = showingSearch ? '검색 결과' : '상위 10개 포스트'
+  const sectionSubtitle = showingSearch
+    ? `'${trimmedQuery}' 검색 결과를 확인하세요.`
+    : 'DevNest 커뮤니티에서 최근 게시된 인기 글을 확인해 보세요.'
 
   return (
     <ViewContainer
@@ -144,30 +203,29 @@ const HomePage = () => {
       <section className="flex flex-col gap-6">
         <div className="flex items-center justify-between">
           <div>
-            <h2 className="text-xl font-semibold text-white">
-              상위 10개 포스트
-            </h2>
-            <p className="text-sm text-slate-400">
-              DevNest 커뮤니티에서 최근 게시된 인기 글을 확인해 보세요.
-            </p>
+            <h2 className="text-xl font-semibold text-white">{sectionTitle}</h2>
+            <p className="text-sm text-slate-400">{sectionSubtitle}</p>
           </div>
-          <span className="rounded-full border border-emerald-500/30 bg-emerald-500/10 px-3 py-1 text-xs font-medium text-emerald-300">
-            실시간 업데이트 예정
-          </span>
+          {!showingSearch && (
+            <span className="rounded-full border border-emerald-500/30 bg-emerald-500/10 px-3 py-1 text-xs font-medium text-emerald-300">
+              실시간 업데이트 예정
+            </span>
+          )}
         </div>
         <div className="min-h-[200px]">
           {isLoading ? (
             <div className="grid gap-4 md:grid-cols-2">
               {Array.from({ length: 4 }).map((_, index) => (
-                <div
-                  key={index}
-                  className="h-40 animate-pulse rounded-2xl border border-slate-800 bg-slate-900/40"
-                />
+                <div key={index} className="h-40 animate-pulse rounded-2xl border border-slate-800 bg-slate-900/40" />
               ))}
             </div>
-          ) : error ? (
+          ) : currentError ? (
             <div className="rounded-2xl border border-red-500/40 bg-red-500/10 p-6 text-sm text-red-200">
-              {error}
+              {currentError}
+            </div>
+          ) : showNoResult ? (
+            <div className="rounded-2xl border border-slate-800 bg-slate-900/60 p-6 text-sm text-slate-400">
+              검색 결과가 없습니다. 다른 키워드를 입력하거나 태그 버튼을 눌러보세요.
             </div>
           ) : (
             <ul className="grid gap-4 md:grid-cols-2">
@@ -176,17 +234,17 @@ const HomePage = () => {
                   key={post.id}
                   className="group relative overflow-hidden rounded-2xl border border-slate-800 bg-slate-900/70 p-5 transition-all duration-200 hover:-translate-y-1 hover:border-emerald-400/60 hover:bg-slate-900/90"
                 >
-                  <div className="absolute inset-y-0 -left-[1px] w-1 bg-gradient-to-b from-emerald-400/90 via-emerald-500/40 to-transparent opacity-0 transition-opacity duration-200 group-hover:opacity-100" />
+                  {!showingSearch && (
+                    <div className="absolute inset-y-0 -left-[1px] w-1 bg-gradient-to-b from-emerald-400/90 via-emerald-500/40 to-transparent opacity-0 transition-opacity duration-200 group-hover:opacity-100" />
+                  )}
                   <div className="flex items-center justify-between text-xs font-medium text-slate-500">
-                    <span>#{String(index + 1).padStart(2, '0')}</span>
+                    {!showingSearch && <span>#{String(index + 1).padStart(2, '0')}</span>}
                     <time dateTime={post.updatedAt ?? post.publishedAt}>
                       최근 업데이트 · {formatDate(post.updatedAt ?? post.publishedAt)}
                     </time>
                   </div>
                   <Link to={`/posts/${post.slug}`} className="mt-3 block space-y-3">
-                    <h3 className="text-lg font-semibold text-white">
-                      {post.title}
-                    </h3>
+                    <h3 className="text-lg font-semibold text-white">{post.title}</h3>
                     <p className="text-sm text-slate-400">
                       {post.summary ?? '상세 내용을 확인해 보세요.'}
                     </p>
@@ -232,15 +290,21 @@ const HomePage = () => {
                   </div>
                 </li>
               ))}
-              {visiblePosts.length === 0 && (
-                <li className="rounded-2xl border border-slate-800 bg-slate-900/60 p-6 text-sm text-slate-400">
-                  검색 결과가 없습니다. 다른 키워드를 입력하거나 태그 버튼을
-                  눌러보세요.
-                </li>
-              )}
             </ul>
           )}
         </div>
+        {showingSearch && searchHasMore && (
+          <div className="flex justify-center">
+            <button
+              type="button"
+              onClick={handleLoadMoreSearch}
+              disabled={searchLoading}
+              className="rounded-full border border-slate-700 px-4 py-2 text-xs text-slate-300 transition-colors hover:border-emerald-400 hover:text-emerald-200 disabled:opacity-50"
+            >
+              {searchLoading ? '불러오는 중...' : '더 보기'}
+            </button>
+          </div>
+        )}
       </section>
     </ViewContainer>
   )

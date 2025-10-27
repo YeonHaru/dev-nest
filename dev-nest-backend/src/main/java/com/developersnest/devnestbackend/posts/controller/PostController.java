@@ -123,10 +123,14 @@ public class PostController {
     }
 
     @GetMapping("/me")
-    public List<PostSummaryResponse> myPosts(@AuthenticationPrincipal UserPrincipal principal) {
+    public PostListResponse myPosts(
+            @AuthenticationPrincipal UserPrincipal principal,
+            @RequestParam(name = "page", required = false) Integer page,
+            @RequestParam(name = "size", required = false) Integer size
+    ) {
         if (principal == null) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "로그인이 필요합니다.");
         }
-        return postService.getPostsByAuthor(principal.getId());
+        return postService.getPostsByAuthor(principal.getId(), page, size);
     }
 }

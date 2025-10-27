@@ -130,7 +130,6 @@ const AuthForm = ({
                 name="username"
                 type="text"
                 required
-                placeholder="user001"
                 value={formValues.username}
                 onChange={handleChange}
                 className="w-full rounded-lg border border-slate-800 bg-slate-900/80 px-3.5 py-2.5 text-sm text-slate-100 transition focus:border-emerald-400 focus:outline-none focus:ring-2 focus:ring-emerald-400/40"
@@ -150,7 +149,6 @@ const AuthForm = ({
                     name="displayName"
                     type="text"
                     required
-                    placeholder="DevNest Explorer"
                     value={formValues.displayName}
                     onChange={handleChange}
                     className="w-full rounded-lg border border-slate-800 bg-slate-900/80 px-3.5 py-2.5 text-sm text-slate-100 transition focus:border-emerald-400 focus:outline-none focus:ring-2 focus:ring-emerald-400/40"
@@ -168,7 +166,6 @@ const AuthForm = ({
                     name="email"
                     type="email"
                     required
-                    placeholder="you@example.com"
                     value={formValues.email}
                     onChange={handleChange}
                     className="w-full rounded-lg border border-slate-800 bg-slate-900/80 px-3.5 py-2.5 text-sm text-slate-100 transition focus:border-emerald-400 focus:outline-none focus:ring-2 focus:ring-emerald-400/40"
@@ -188,7 +185,6 @@ const AuthForm = ({
                 name="password"
                 type="password"
                 required
-                placeholder="********"
                 value={formValues.password}
                 onChange={handleChange}
                 className="w-full rounded-lg border border-slate-800 bg-slate-900/80 px-3.5 py-2.5 text-sm text-slate-100 transition focus:border-emerald-400 focus:outline-none focus:ring-2 focus:ring-emerald-400/40"
@@ -207,7 +203,6 @@ const AuthForm = ({
                   name="confirmPassword"
                   type="password"
                   required
-                  placeholder="********"
                   value={formValues.confirmPassword}
                   onChange={handleChange}
                   className="w-full rounded-lg border border-slate-800 bg-slate-900/80 px-3.5 py-2.5 text-sm text-slate-100 transition focus:border-emerald-400 focus:outline-none focus:ring-2 focus:ring-emerald-400/40"

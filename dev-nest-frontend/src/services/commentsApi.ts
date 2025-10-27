@@ -48,6 +48,14 @@ export type UserComment = {
   updatedAt: string
 }
 
+export type UserCommentListResponse = {
+  items: UserComment[]
+  totalElements: number
+  totalPages: number
+  page: number
+  size: number
+}
+
 const jsonHeaders = {
   'Content-Type': 'application/json',
   Accept: 'application/json',
@@ -152,13 +160,20 @@ export const commentsApi = {
     })
     return handleResponse<CommentReaction>(response)
   },
-  async fetchMyComments(accessToken: string): Promise<UserComment[]> {
-    const response = await fetch(`${API_BASE_URL}/api/comments/me`, {
+  async fetchMyComments(
+    accessToken: string,
+    params: { page?: number; size?: number } = {},
+  ): Promise<UserCommentListResponse> {
+    const search = new URLSearchParams()
+    if (typeof params.page === 'number') search.set('page', String(params.page))
+    if (typeof params.size === 'number') search.set('size', String(params.size))
+    const query = search.toString()
+    const response = await fetch(`${API_BASE_URL}/api/comments/me${query ? `?${query}` : ''}`, {
       headers: {
         Accept: 'application/json',
         ...createAuthHeaders(accessToken),
       },
     })
-    return handleResponse<UserComment[]>(response)
+    return handleResponse<UserCommentListResponse>(response)
   },
 }

@@ -1,4 +1,3 @@
-import { useMemo } from 'react'
 import { Navigate } from 'react-router-dom'
 import ViewContainer from '../components/ViewContainer'
 import { useAuth } from '../contexts/AuthContext'
@@ -24,19 +23,21 @@ const MyPage = () => {
     posts,
     isLoading: isLoadingPosts,
     error: postsError,
+    hasMore: hasMorePosts,
+    loadMore: loadMorePosts,
+    totalElements: totalPostCount,
+    totalViews,
+    totalLikes,
   } = useMyPosts(accessToken)
 
   const {
     comments,
     isLoading: isLoadingComments,
     error: commentsError,
+    hasMore: hasMoreComments,
+    loadMore: loadMoreComments,
+    totalElements: totalCommentCount,
   } = useMyComments(accessToken)
-
-  const totalStats = useMemo(() => {
-    const views = posts.reduce((acc, post) => acc + (Number.isFinite(post.views) ? post.views : 0), 0)
-    const likes = posts.reduce((acc, post) => acc + (Number.isFinite(post.likes) ? post.likes : 0), 0)
-    return { views, likes }
-  }, [posts])
 
   if (!user) {
     return <Navigate to="/signin" replace />
@@ -46,10 +47,10 @@ const MyPage = () => {
     <ViewContainer as="main" className="flex flex-col gap-10 py-16 text-slate-100">
       <ProfileSummaryCard
         user={user}
-        postCount={posts.length}
-        commentCount={comments.length}
-        totalViews={totalStats.views}
-        totalLikes={totalStats.likes}
+        postCount={totalPostCount}
+        commentCount={totalCommentCount}
+        totalViews={totalViews}
+        totalLikes={totalLikes}
       />
 
       <PostListSection
@@ -57,12 +58,18 @@ const MyPage = () => {
         isLoading={isLoadingPosts}
         error={postsError}
         renderSummary={summarizePost}
+        hasMore={hasMorePosts}
+        onLoadMore={loadMorePosts}
+        totalCount={totalPostCount}
       />
 
       <CommentListSection
         comments={comments}
         isLoading={isLoadingComments}
         error={commentsError}
+        hasMore={hasMoreComments}
+        onLoadMore={loadMoreComments}
+        totalCount={totalCommentCount}
       />
     </ViewContainer>
   )

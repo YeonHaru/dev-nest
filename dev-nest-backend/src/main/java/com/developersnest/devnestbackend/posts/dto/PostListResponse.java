@@ -7,6 +7,8 @@ public record PostListResponse(
         long totalElements,
         int totalPages,
         int page,
-        int size
+        int size,
+        long totalViews,
+        long totalLikes
 ) {
 }

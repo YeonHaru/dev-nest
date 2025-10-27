@@ -7,6 +7,7 @@ import com.developersnest.devnestbackend.comments.dto.CommentResponse;
 import com.developersnest.devnestbackend.comments.dto.CommentResponse.AuthorInfo;
 import com.developersnest.devnestbackend.comments.dto.CreateCommentRequest;
 import com.developersnest.devnestbackend.comments.dto.UpdateCommentRequest;
+import com.developersnest.devnestbackend.comments.dto.UserCommentListResponse;
 import com.developersnest.devnestbackend.comments.dto.UserCommentResponse;
 import com.developersnest.devnestbackend.comments.entity.CommentEntity;
 import com.developersnest.devnestbackend.comments.entity.CommentReactionEntity;
@@ -25,6 +26,10 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -86,10 +91,14 @@ public class CommentService {
     }
 
     @Transactional(readOnly = true)
-    public List<UserCommentResponse> listUserComments(Long userId) {
-        List<CommentEntity> comments = commentRepository.findByAuthor_IdOrderByCreatedAtDesc(userId);
+    public UserCommentListResponse listUserComments(Long userId, Integer page, Integer size) {
+        int pageIndex = page != null && page >= 0 ? page : 0;
+        int pageSize = size != null && size > 0 ? Math.min(size, 50) : 10;
+        Pageable pageable = PageRequest.of(pageIndex, pageSize, Sort.by(Sort.Direction.DESC, "createdAt", "id"));
+        Page<CommentEntity> result = commentRepository.findByAuthor_Id(userId, pageable);
+        List<CommentEntity> comments = result.getContent();
         if (comments.isEmpty()) {
-            return List.of();
+            return new UserCommentListResponse(List.of(), result.getTotalElements(), result.getTotalPages(), result.getNumber(), result.getSize());
         }
 
         List<Long> commentIds = comments.stream()
@@ -109,7 +118,7 @@ public class CommentService {
                         LinkedHashMap::new
                 ));
 
-        return comments.stream()
+        List<UserCommentResponse> items = comments.stream()
                 .map(comment -> new UserCommentResponse(
                         comment.getId(),
                         comment.getPost() != null ? comment.getPost().getId() : null,
@@ -124,6 +133,8 @@ public class CommentService {
                         comment.getUpdatedAt()
                 ))
                 .toList();
+
+        return new UserCommentListResponse(items, result.getTotalElements(), result.getTotalPages(), result.getNumber(), result.getSize());
     }
 
     @Transactional

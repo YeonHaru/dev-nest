@@ -18,6 +18,7 @@ import com.developersnest.devnestbackend.posts.repository.PostMetricsRepository;
 import com.developersnest.devnestbackend.posts.repository.PostRepository;
 import com.developersnest.devnestbackend.posts.repository.TagRepository;
 import java.text.Normalizer;
+import java.util.regex.Pattern;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -43,6 +44,9 @@ public class PostService {
 
     private static final int MAX_PAGE_SIZE = 50;
     private static final int DEFAULT_PAGE_SIZE = 10;
+
+    private static final Pattern NON_SLUG_PATTERN = Pattern.compile("[^\\p{IsAlphabetic}\\p{IsDigit}]+");
+    private static final Pattern CONSECUTIVE_HYPHENS = Pattern.compile("-+");
 
     private final PostRepository postRepository;
     private final TagRepository tagRepository;
@@ -174,13 +178,21 @@ public class PostService {
         String normalizedKeyword = StringUtils.hasText(keyword) ? keyword.trim() : null;
         Page<PostEntity> result = postRepository.search(normalizedKeyword, pageable);
         List<PostSummaryResponse> items = postMapper.toSummaryList(result.getContent());
-        return new PostListResponse(items, result.getTotalElements(), result.getTotalPages(), result.getNumber(), result.getSize());
+        long totalViews = result.getContent().stream().mapToLong(this::extractViews).sum();
+        long totalLikes = result.getContent().stream().mapToLong(this::extractLikes).sum();
+        return new PostListResponse(items, result.getTotalElements(), result.getTotalPages(), result.getNumber(), result.getSize(), totalViews, totalLikes);
     }
 
     @Transactional(readOnly = true)
-    public List<PostSummaryResponse> getPostsByAuthor(Long authorId) {
-        List<PostEntity> posts = postRepository.findByAuthor_IdOrderByUpdatedAtDesc(authorId);
-        return postMapper.toSummaryList(posts);
+    public PostListResponse getPostsByAuthor(Long authorId, Integer page, Integer size) {
+        int pageIndex = page != null && page >= 0 ? page : 0;
+        int pageSize = size != null && size > 0 ? Math.min(size, MAX_PAGE_SIZE) : DEFAULT_PAGE_SIZE;
+        Pageable pageable = PageRequest.of(pageIndex, pageSize, Sort.by(Sort.Direction.DESC, "updatedAt", "id"));
+        Page<PostEntity> result = postRepository.findByAuthor_Id(authorId, pageable);
+        List<PostSummaryResponse> items = postMapper.toSummaryList(result.getContent());
+        long totalViews = postMetricsRepository.sumViewsByAuthor(authorId);
+        long totalLikes = postMetricsRepository.sumLikesByAuthor(authorId);
+        return new PostListResponse(items, result.getTotalElements(), result.getTotalPages(), result.getNumber(), result.getSize(), totalViews, totalLikes);
     }
 
     private void applyWriteRequest(PostEntity post, PostWriteRequest request, boolean isNew) {
@@ -258,6 +270,16 @@ public class PostService {
         return metrics;
     }
 
+    private long extractViews(PostEntity post) {
+        PostMetricsEntity metrics = post.getMetrics();
+        return metrics != null ? metrics.getViewsCount() : 0L;
+    }
+
+    private long extractLikes(PostEntity post) {
+        PostMetricsEntity metrics = post.getMetrics();
+        return metrics != null ? metrics.getLikesCount() : 0L;
+    }
+
     private String generateUniqueSlug(String title, Long currentPostId) {
         String baseSlug = toSlug(title);
         if (baseSlug.isBlank()) {
@@ -279,13 +301,12 @@ public class PostService {
         if (!StringUtils.hasText(input)) {
             return "";
         }
-        String normalized = Normalizer.normalize(input, Normalizer.Form.NFD)
-                .replaceAll("\\p{M}", "");
-        return normalized
-                .toLowerCase(Locale.ROOT)
-                .replaceAll("[^a-z0-9]+", "-")
-                .replaceAll("-+", "-")
-                .replaceAll("^-|-$", "");
+        String normalized = Normalizer.normalize(input, Normalizer.Form.NFKC).trim();
+        String lowerCased = normalized.toLowerCase(Locale.ROOT);
+        String replaced = NON_SLUG_PATTERN.matcher(lowerCased).replaceAll("-");
+        String compacted = CONSECUTIVE_HYPHENS.matcher(replaced).replaceAll("-");
+        String trimmed = compacted.replaceAll("^-|-$", "");
+        return trimmed;
     }
 
     private String normalizeNullable(String value) {

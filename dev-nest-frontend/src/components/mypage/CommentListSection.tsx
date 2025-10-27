@@ -7,10 +7,14 @@ type CommentListSectionProps = {
   comments: UserComment[]
   isLoading: boolean
   error: string | null
+  hasMore: boolean
+  onLoadMore: () => void
+  totalCount: number
 }
 
-const CommentListSection = ({ comments, isLoading, error }: CommentListSectionProps) => {
+const CommentListSection = ({ comments, isLoading, error, hasMore, onLoadMore, totalCount }: CommentListSectionProps) => {
   const commentCount = comments.length
+  const isInitialLoading = isLoading && commentCount === 0
 
   const renderPreview = (comment: UserComment) => {
     if (comment.deleted) {
@@ -34,10 +38,10 @@ const CommentListSection = ({ comments, isLoading, error }: CommentListSectionPr
           <p className="text-sm text-slate-400">최근 작성 순으로 정렬됩니다.</p>
         </div>
         <span className="rounded-full border border-emerald-500/30 bg-emerald-500/10 px-3 py-1 text-xs font-medium text-emerald-300">
-          총 {commentCount.toLocaleString()}개
+          총 {totalCount.toLocaleString()}개
         </span>
       </header>
-      {isLoading ? (
+      {isInitialLoading ? (
         <div className="space-y-4">
           {Array.from({ length: 4 }).map((_, index) => (
             <div key={index} className="animate-pulse space-y-2 rounded-2xl border border-slate-800 bg-slate-900/40 p-5">
@@ -90,6 +94,18 @@ const CommentListSection = ({ comments, isLoading, error }: CommentListSectionPr
             )
           })}
         </ul>
+      )}
+      {hasMore && commentCount > 0 && (
+        <div className="flex justify-center">
+          <button
+            type="button"
+            onClick={onLoadMore}
+            disabled={isLoading}
+            className="rounded-full border border-slate-700 px-4 py-2 text-xs text-slate-300 transition-colors hover:border-emerald-400 hover:text-emerald-200 disabled:opacity-50"
+          >
+            {isLoading ? '불러오는 중...' : '더 보기'}
+          </button>
+        </div>
       )}
     </section>
   )

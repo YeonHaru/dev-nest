@@ -22,5 +22,5 @@ public interface PostRepository extends JpaRepository<PostEntity, Long> {
     Page<PostEntity> search(@Param("keyword") String keyword, Pageable pageable);
 
     @EntityGraph(attributePaths = {"metrics", "tags"})
-    java.util.List<PostEntity> findByAuthor_IdOrderByUpdatedAtDesc(Long authorId);
+    Page<PostEntity> findByAuthor_Id(Long authorId, Pageable pageable);
 }

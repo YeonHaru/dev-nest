@@ -38,12 +38,14 @@ export type PostEngagement = {
   liked: boolean
 }
 
-type PostListResponse = {
+export type PostListResponse = {
   items: PostSummary[]
   totalElements: number
   totalPages: number
   page: number
   size: number
+  totalViews: number
+  totalLikes: number
 }
 
 export type CreatePostPayload = {
@@ -173,13 +175,20 @@ export const postsApi = {
     })
     return handleResponse<PostEngagement>(response)
   },
-  async fetchMyPosts(accessToken: string): Promise<PostSummary[]> {
-    const response = await fetch(`${API_BASE_URL}/api/posts/me`, {
+  async fetchMyPosts(
+    accessToken: string,
+    params: { page?: number; size?: number } = {},
+  ): Promise<PostListResponse> {
+    const search = new URLSearchParams()
+    if (typeof params.page === 'number') search.set('page', String(params.page))
+    if (typeof params.size === 'number') search.set('size', String(params.size))
+    const query = search.toString()
+    const response = await fetch(`${API_BASE_URL}/api/posts/me${query ? `?${query}` : ''}`, {
       headers: {
         Authorization: `Bearer ${accessToken}`,
         Accept: 'application/json',
       },
     })
-    return handleResponse<PostSummary[]>(response)
+    return handleResponse<PostListResponse>(response)
   },
 }
